@@ -1,0 +1,50 @@
+﻿CREATE TABLE Roles (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL
+);
+CREATE TABLE Users (
+    Id SERIAL PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL UNIQUE,
+    PasswordHash VARCHAR(255) NOT NULL,
+    RoleId INT NOT NULL,
+    FOREIGN KEY (RoleId) REFERENCES Roles(Id) ON DELETE CASCADE
+);
+
+CREATE TABLE UserRoles (
+    UserId INT NOT NULL,
+    RoleId INT NOT NULL,
+    PRIMARY KEY (UserId, RoleId),
+    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE,
+    FOREIGN KEY (RoleId) REFERENCES Roles(Id) ON DELETE CASCADE
+);
+CREATE TABLE ServicePoints (
+    ID SERIAL PRIMARY KEY,
+    CreatedAt TIMESTAMP NOT NULL,
+    CreatedBy VARCHAR(255),
+    Name VARCHAR(255) NOT NULL,
+    Location VARCHAR(255) NOT NULL,
+    Description TEXT
+);
+CREATE TABLE Customers (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    ServiceType VARCHAR(255) NOT NULL,
+    ServedBy VARCHAR(255),
+    TicketNumber INT NOT NULL,
+    CheckIn TIMESTAMP NOT NULL,
+    ServiceStartTime TIMESTAMP,
+    Checkout TIMESTAMP,
+    ServicePointID INT NOT NULL,
+    FOREIGN KEY (ServicePointID) REFERENCES ServicePoints(ID) ON DELETE SET NULL
+);
+
+CREATE TABLE Queue (
+    ID SERIAL PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    ServicePointID INT NOT NULL,
+    Status VARCHAR(255) NOT NULL,
+    StartTime TIMESTAMP NOT NULL,
+    EndTime TIMESTAMP,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(Id) ON DELETE CASCADE,
+    FOREIGN KEY (ServicePointID) REFERENCES ServicePoints(ID) ON DELETE CASCADE
+);
